@@ -46,7 +46,7 @@ export default function App() {
 
   return (
     <div className="w-full text-center flex flex-col gap-4 mt-10">
-      <h1 className="text-4xl text-gray-600">Extract an rss/atom link</h1>
+      <h1 className="text-4xl text-gray-600">Extract a rss/atom link</h1>
       <input
         placeholder="Enter your blog link"
         type="text"
