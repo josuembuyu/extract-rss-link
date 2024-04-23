@@ -3,10 +3,14 @@ import React, { useState } from "react";
 export default function App() {
   const [username, setUsername] = useState("");
   const [feedLink, setFeedLink] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function extractFeedLink(url: string) {
     try {
-      const response = await fetch(url);
+      setLoading(true);
+      const response = await fetch(
+        "https://cors-anywhere.herokuapp.com/" + url
+      );
       const html = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");
@@ -15,6 +19,8 @@ export default function App() {
       const feedLink = doc.querySelector<HTMLLinkElement>(
         'link[rel="alternate"][type="application/rss+xml"], link[rel="alternate"][type="application/atom+xml"]'
       );
+
+      setLoading(false);
 
       if (feedLink && feedLink.href) {
         return feedLink.href;
@@ -49,7 +55,9 @@ export default function App() {
         onChange={handleUsernameChange}
         className="px-3 h-12 w-1/3 mx-auto border border-gray-300 rounded-lg"
       />
-      <button onClick={handleExtract}>Extract</button>
+      <button onClick={handleExtract}>
+        {loading ? "Processing..." : "Extract"}
+      </button>
       {feedLink && (
         <p className="mt-4">
           RSS/Atom feed link:{" "}
