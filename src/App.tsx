@@ -12,11 +12,11 @@ export default function App() {
       const doc = parser.parseFromString(html, "text/html");
 
       // Look for <link> tags with rel="alternate" and type="application/rss+xml" or "application/atom+xml"
-      const feedLink = doc.querySelector(
+      const feedLink = doc.querySelector<HTMLLinkElement>(
         'link[rel="alternate"][type="application/rss+xml"], link[rel="alternate"][type="application/atom+xml"]'
       );
 
-      if (feedLink) {
+      if (feedLink && feedLink.href) {
         return feedLink.href;
       } else {
         return "Feed link not found";
