@@ -9,17 +9,23 @@ export default function App() {
   async function extractFeedLink(url: string) {
     try {
       setLoading(true);
-      const response = await fetch(`/api/rss?url=${encodeURIComponent(url)}`);
+      const response = await fetch(
+        `https://extract-rss-api.onrender.com/api/rss?url=${encodeURIComponent(
+          url
+        )}`
+      );
       if (!response.ok) {
         throw new Error(`Failed to fetch RSS link: ${response.statusText}`);
       }
       const data = await response.json();
+
       console.log(data);
 
       setLoading(false);
       return { link: data.rssLink, title: data.title };
     } catch (error) {
       console.error("Error fetching RSS link:", error);
+      setLoading(false);
       return null;
     }
   }
