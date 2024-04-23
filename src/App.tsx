@@ -3,32 +3,23 @@ import React, { useState } from "react";
 export default function App() {
   const [username, setUsername] = useState("");
   const [feedLink, setFeedLink] = useState("");
+  const [titleBlog, setTitleBlog] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function extractFeedLink(url: string) {
     try {
       setLoading(true);
-      const response = await fetch(
-        "https://cors-anywhere.herokuapp.com/" + url
-      );
-      const html = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, "text/html");
-
-      // Look for <link> tags with rel="alternate" and type="application/rss+xml" or "application/atom+xml"
-      const feedLink = doc.querySelector<HTMLLinkElement>(
-        'link[rel="alternate"][type="application/rss+xml"], link[rel="alternate"][type="application/atom+xml"]'
-      );
+      const response = await fetch(`/api/rss?url=${encodeURIComponent(url)}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch RSS link: ${response.statusText}`);
+      }
+      const data = await response.json();
+      console.log(data);
 
       setLoading(false);
-
-      if (feedLink && feedLink.href) {
-        return feedLink.href;
-      } else {
-        return "Feed link not found";
-      }
+      return { link: data.rssLink, title: data.title };
     } catch (error) {
-      console.error("Error fetching or parsing HTML:", error);
+      console.error("Error fetching RSS link:", error);
       return null;
     }
   }
@@ -36,7 +27,8 @@ export default function App() {
   const handleExtract = async () => {
     try {
       const extractedFeedLink = await extractFeedLink(username);
-      setFeedLink(extractedFeedLink || "Feed link not found");
+      setFeedLink(extractedFeedLink?.link || "Feed link not found");
+      setTitleBlog(extractedFeedLink?.title || "Feed title not found");
     } catch (error) {
       console.error("Error:", error);
     }
@@ -58,6 +50,9 @@ export default function App() {
       <button onClick={handleExtract}>
         {loading ? "Processing..." : "Extract"}
       </button>
+
+      {titleBlog && <p className="mt-4">Blog Title: {titleBlog}</p>}
+
       {feedLink && (
         <p className="mt-4">
           RSS/Atom feed link:{" "}
