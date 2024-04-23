@@ -53,7 +53,10 @@ export default function App() {
         onChange={handleUsernameChange}
         className="px-3 h-12 w-1/3 mx-auto border border-gray-300 rounded-lg"
       />
-      <button onClick={handleExtract}>
+      <button
+        className="bg-gray-800 text-white px-4 py-4 w-1/3 mx-auto rounded-lg"
+        onClick={handleExtract}
+      >
         {loading ? "Processing..." : "Extract"}
       </button>
 
