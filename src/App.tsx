@@ -11,7 +11,9 @@ export default function App() {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:3001/api/rss?url=${encodeURIComponent(url)}`
+        `https://extract-rss-api.onrender.com/api/rss?url=${encodeURIComponent(
+          url
+        )}`
       );
       if (!response.ok) {
         throw new Error(`Failed to fetch RSS link: ${response.statusText}`);
