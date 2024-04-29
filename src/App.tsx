@@ -3,28 +3,26 @@ import React, { useState } from "react";
 export default function App() {
   const [username, setUsername] = useState("");
   const [feedLink, setFeedLink] = useState("");
-  const [atomLink, setAtomLink] = useState("");
-  const [titleBlog, setTitleBlog] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function extractLink(url: string) {
     try {
       setLoading(true);
       const response = await fetch(
-        `https://extract-rss-api.onrender.com/api/rss?url=${encodeURIComponent(
-          url
-        )}`
+        `http://localhost:3001/api/rss?url=${encodeURIComponent(url)}`
       );
       if (!response.ok) {
-        throw new Error(`Failed to fetch RSS link: ${response.statusText}`);
+        throw new Error(`Failed to fetch Feed link: ${response.statusText}`);
       }
       const data = await response.json();
 
+      console.log(data);
+
       setLoading(false);
 
-      return { link: data.rssLink, atom: data.atomLink, title: data.title };
+      return { link: data.feedLink };
     } catch (error) {
-      console.error("Error fetching RSS link:", error);
+      console.error("Error fetching Feed link:", error);
       setLoading(false);
       return null;
     }
@@ -33,11 +31,7 @@ export default function App() {
   const handleExtract = async () => {
     try {
       const extractedLink = await extractLink(username);
-      console.log(extractedLink);
-
       setFeedLink(extractedLink?.link || "Feed link not found");
-      setAtomLink(extractedLink?.atom || "Atom link not found");
-      setTitleBlog(extractedLink?.title || "Feed title not found");
     } catch (error) {
       console.error("Error:", error);
     }
@@ -46,8 +40,6 @@ export default function App() {
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
   };
-
-  console.log(feedLink, atomLink, titleBlog);
 
   return (
     <div className="w-full text-center flex flex-col gap-4 mt-10">
@@ -66,22 +58,11 @@ export default function App() {
         {loading ? "Processing..." : "Extract"}
       </button>
 
-      {titleBlog && <p className="mt-4">Blog Title: {titleBlog}</p>}
-
       {feedLink && (
         <p className="mt-4">
-          RSS feed link:{" "}
+          Feed link:{" "}
           <a href={feedLink} target="_blank" rel="noopener noreferrer">
             {feedLink}
-          </a>
-        </p>
-      )}
-
-      {atomLink && (
-        <p className="mt-4">
-          Atom feed link:{" "}
-          <a href={atomLink} target="_blank" rel="noopener noreferrer">
-            {atomLink}
           </a>
         </p>
       )}
