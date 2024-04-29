@@ -9,14 +9,14 @@ export default function App() {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:3001/api/rss?url=${encodeURIComponent(url)}`
+        `https://extract-rss-api.onrender.com/api/rss?url=${encodeURIComponent(
+          url
+        )}`
       );
       if (!response.ok) {
         throw new Error(`Failed to fetch Feed link: ${response.statusText}`);
       }
       const data = await response.json();
-
-      console.log(data);
 
       setLoading(false);
 
